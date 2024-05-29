@@ -1,3 +1,11 @@
 ---
 default_file: "/etc/sysconfig"
-repo_url: "https://artifacts.elastic.co/packages/{{ beats_major_version }}/yum"
+elastic_repo_title: "elastic-{{ beats_major_version }}"
+elastic_repo_name: "Elastic repository for {{ beats_major_version }} packages"
+elastic_repo_url: "https://artifacts.elastic.co/packages/{{ beats_major_version }}/yum"
+elastic_repo_priority: 2
+elastic_repo_key: "https://packages.elastic.co/GPG-KEY-elasticsearch"
+elastic_repo_enable: true
+elastic_repo_autorefresh: true
+elastic_repo_disable_gpg_check: false
+

@@ -1,13 +1,19 @@
 ---
-- name: Redhat - add beats repository
-  become: yes
-  template:
-    src: beats.repo.j2
-    dest: /etc/zypper.repos.d/beats.repo
+
+- name: Suse - add beats repository
+  ansible.builtin.zypper_repository:
+    name: "{{ elastic_repo_title }}"
+    description: "{{ elastic_repo_name }}"
+    repo: "{{ elastic_repo_url }}"
+    priority: "{{ elastic_repo_priority }}"
+    disable_gpg_check: "{{ elastic_repo_disable_gpg_check }}"
+    auto_import_keys: true
+    enabled: "{{ elastic_repo_enable }}"
+    autorefresh: "{{ elastic_repo_autorefresh }}"
   when: beats_add_repository | bool
 
 - name: Suse - unlock {{ beat }} for install
-  become: yes
+  become: true
   shell: zypper removelock {{ beat }}
   changed_when: false
   when: version_lock | bool
@@ -15,7 +21,7 @@
     - skip_ansible_lint
 
 - name: Suse - Ensure {{ beat }} is installed
-  become: yes
+  become: true
   zypper:
     name: >-
       {{ beat }}{% if beats_version is defined and beats_version|length %}-{{ beats_version }}{% endif %}
@@ -27,7 +33,7 @@
   notify: restart the service
 
 - name: Suse - lock {{ beat }} version
-  become: yes
+  become: true
   shell: >-
     zypper addlock
     {{ beat }}{% if beats_version is defined and beats_version|length %}-{{ beats_version }}{% endif %}
@@ -37,7 +43,7 @@
     - skip_ansible_lint
 
 - name: Suse - Install {{ beat }} from url
-  become: yes
+  become: true
   zypper:
     name: >-
       {% if custom_package_url is defined %}{{ custom_package_url }}{%
