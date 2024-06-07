@@ -20,6 +20,13 @@
   tags:
     - skip_ansible_lint
 
+- name: Suse - Ensure insserv-compat is installed
+  become: true
+  zypper:
+    name: insserv-compat
+    state: present
+    update_cache: true
+
 - name: Suse - Ensure {{ beat }} is installed
   become: true
   zypper:
