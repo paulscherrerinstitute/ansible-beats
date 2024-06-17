@@ -12,6 +12,7 @@
 - name: Include specific Beats
   include_tasks: beats-suse.yml
   when: ansible_os_family == 'Suse'
+  check_mode: false
 
 # Configuration file for beats
 # Configuration file for beats
