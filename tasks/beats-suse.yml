@@ -35,7 +35,7 @@
   become: true
   zypper:
     name: >-
-      {{ beat }}{% if beats_version is defined and beats_version|length %}-{{ beats_version }}{% endif %}
+      {{ beat }}{% if beats_version is defined and beats_version|length %}={{ beats_version }}{% endif %}
     state: present
     update_cache: true
   check_mode: false
@@ -48,7 +48,7 @@
   become: true
   shell: >-
     zypper addlock
-    {{ beat }}{% if beats_version is defined and beats_version|length %}-{{ beats_version }}{% endif %}
+    {{ beat }}{% if beats_version is defined and beats_version|length %}={{ beats_version }}{% endif %}
   check_mode: false
   changed_when: false
   tags:
