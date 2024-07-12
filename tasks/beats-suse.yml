@@ -13,15 +13,6 @@
     autorefresh: "{{ elastic_repo_autorefresh }}"
   check_mode: false
 
-- name: Suse - unlock {{ beat }} for install
-  when: version_lock | bool
-  become: true
-  shell: zypper removelock {{ beat }}
-  changed_when: false
-  check_mode: false
-  tags:
-    - skip_ansible_lint
-
 - name: Suse - Ensure insserv-compat is installed
   become: true
   zypper:
@@ -48,7 +39,7 @@
   become: true
   shell: >-
     zypper addlock
-    {{ beat }}{% if beats_version is defined and beats_version|length %}={{ beats_version }}{% endif %}
+    "pattern:{{ beat }}*{% if beats_version is defined and beats_version|length %}={{ beats_version }}{% endif %}"
   check_mode: false
   changed_when: false
   tags:
