@@ -1,0 +1,59 @@
+---
+
+- name: Suse - add beats repository
+  when: beats_add_repository | bool
+  ansible.builtin.zypper_repository:
+    name: "{{ elastic_repo_title }}"
+    description: "{{ elastic_repo_name }}"
+    repo: "{{ elastic_repo_url }}"
+    priority: "{{ elastic_repo_priority }}"
+    disable_gpg_check: "{{ elastic_repo_disable_gpg_check }}"
+    auto_import_keys: true
+    enabled: "{{ elastic_repo_enable }}"
+    autorefresh: "{{ elastic_repo_autorefresh }}"
+  check_mode: false
+
+- name: Suse - Ensure insserv-compat is installed
+  become: true
+  zypper:
+    name: insserv-compat
+    state: present
+    update_cache: true
+  check_mode: false
+
+- name: Suse - Ensure {{ beat }} is installed
+  when: use_repository | bool
+  become: true
+  zypper:
+    name: >-
+      {{ beat }}{% if beats_version is defined and beats_version|length %}={{ beats_version }}{% endif %}
+    state: present
+    update_cache: true
+  check_mode: false
+  register: beat_install
+  until: beat_install is succeeded
+  notify: restart the service
+
+- name: Suse - lock {{ beat }} version
+  when: version_lock | bool
+  become: true
+  shell: >-
+    zypper addlock
+    "pattern:{{ beat }}*{% if beats_version is defined and beats_version|length %}={{ beats_version }}{% endif %}"
+  check_mode: false
+  changed_when: false
+  tags:
+    - skip_ansible_lint
+
+- name: Suse - Install {{ beat }} from url
+  when: not use_repository
+  become: true
+  zypper:
+    name: >-
+      {% if custom_package_url is defined %}{{ custom_package_url }}{%
+        else %}{{ beats_package_url }}/{{ beat }}-{{ beats_version }}-{{ ansible_architecture }}.rpm{% endif %}
+    state: present
+  check_mode: false
+  register: beat_install
+  until: beat_install is succeeded
+  notify: restart the service

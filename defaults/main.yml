@@ -11,4 +11,15 @@ daemon_args: ""
 logging_conf: {"files":{"rotateeverybytes":10485760}}
 output_conf: {"elasticsearch":{"hosts":["localhost:9200"]}}
 beats_pid_dir: "/var/run"
-beats_conf_dir: "/etc/{{beat}}"
+beats_conf_dir: "/etc/{{ beat }}"
+
+# Suse defaults
+default_file: "/etc/sysconfig"
+elastic_repo_title: "elastic-{{ beats_major_version }}"
+elastic_repo_name: "Elastic repository for {{ beats_major_version }} packages"
+elastic_repo_url: "https://artifacts.elastic.co/packages/{{ beats_major_version }}/yum"
+elastic_repo_priority: 2
+elastic_repo_key: "https://packages.elastic.co/GPG-KEY-elasticsearch"
+elastic_repo_enable: true
+elastic_repo_autorefresh: true
+elastic_repo_disable_gpg_check: false

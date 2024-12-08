@@ -9,6 +9,11 @@
   include_tasks: beats-redhat.yml
   when: ansible_os_family == 'RedHat'
 
+- name: Include specific Beats
+  include_tasks: beats-suse.yml
+  when: ansible_os_family == 'Suse'
+
+# Configuration file for beats
 # Configuration file for beats
 - name: Beats configuration
   include_tasks: beats-config.yml
